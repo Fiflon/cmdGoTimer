@@ -31,8 +31,7 @@ func main() {
 	fmt.Println("The time is up!")
 
 	// play the sound
-	filename := "tanczace_eurydyki.mp3"
-	if err := player.PlaySound(filename); err != nil {
+	if err := player.PlaySound(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error while playing sound: %v\n", err)
 		os.Exit(1) // Zakończ program z kodem błędu
 	}

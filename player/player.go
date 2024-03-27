@@ -2,11 +2,9 @@ package player
 
 import (
 	"math/rand"
-	"os"
 	"time"
 
 	"github.com/gopxl/beep"
-	"github.com/gopxl/beep/mp3"
 	"github.com/gopxl/beep/speaker"
 )
 
@@ -23,27 +21,15 @@ func (no Noise) Err() error {
 	return nil
 }
 
-func PlaySound(filename string) error {
+func PlaySound() error {
 	sr := beep.SampleRate(44100)
-	f, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
 
-	streamer, format, err := mp3.Decode(f)
-	if err != nil {
-		return err
-	}
-	defer streamer.Close()
+	speaker.Init(sr, sr.N(time.Second/10))
 
-	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
-	done := make(chan struct{})
-	speaker.Play(beep.Seq(beep.Take(sr.N(8*time.Second), Noise{}), beep.Callback(func() {
-		close(done)
+	done := make(chan bool)
+	speaker.Play(beep.Seq(beep.Take(sr.N(5*time.Second), Noise{}), beep.Callback(func() {
+		done <- true
 	})))
-
 	<-done
 	return nil
 }
